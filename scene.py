@@ -7,7 +7,7 @@ speech_service = CoquiService()
 setup_speech = lambda obj: obj.set_speech_service(speech_service)
 
 
-class Top(VoiceoverScene):
+class ExplainProblem(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
