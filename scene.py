@@ -90,3 +90,26 @@ class ExplainProblem(VoiceoverScene):
         after = text[start + length :]
         pango_markup = f"{before}<span color='black'>{hidden}</span>{after}"
         return pango_markup
+
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        ax = Axes()
+        graph = ax.plot(lambda x: (0.35 * (x**2)) + x + 1, color=PURPLE_B)
+        with self.voiceover("Let's consider a second-degree polynomial") as t:
+            self.play(Create(ax), run_time=t.duration / 2)
+            self.play(Create(graph), run_time=t.duration / 2)
+
+        with self.voiceover("We'll set the constant term equal to our secret") as t:
+            constant_graph = ax.plot(lambda x: -2, color=PURPLE_B)
+            self.play(Transform(graph, constant_graph), run_time=t.duration)
+
+        with self.voiceover("The other coefficients will be chosen randomly") as t:
+            real_graph = ax.plot(
+                lambda x: (0.2 * (x**2)) + (0.35 * x) - 2, color=PURPLE_B
+            )
+            self.play(Transform(graph, real_graph), run_time=t.duration)
+
+        self.wait()
