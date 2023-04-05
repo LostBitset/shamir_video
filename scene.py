@@ -17,52 +17,52 @@ class Top(VoiceoverScene):
             self.wait(t.duration)
 
         secret_text = "Top_Secret._"
-        secret = Text("Secret", font_size=40)
+        secret = Text(secret_text, font_size=40)
         self.play(Write(secret))
 
         with self.voiceover("You want to encrypt the secret in such a way that") as t:
             self.play(
-                Transform(secret, Text("dd82e91a", font_size=40).shift(LEFT * 4)),
+                Transform(
+                    secret, Text("dd 82 e9 1a 75 2f", font_size=40).shift(LEFT * 4)
+                ),
                 run_time=t.duration,
             )
 
         n = 4
         people = None
         with self.voiceover("there are four total people with shares") as t:
-            top_person = Circle()
-            people = [
-                Circle().next_to(top_person, DOWN * i),
-                for i in range(n)
-            ]
-            people_group = Group(*people)
+            people = [Circle(radius=0.8) for _ in range(n)]
+            people_group = VGroup(*people)
+            people_group.arrange_in_grid(cols=1, buff=0.1)
             for person in people:
                 person.set_stroke(width=0)
                 person.set_fill(RED, opacity=0.5)
-            self.play(Create(people_group), run_time=t.duration)
+                self.play(Create(person), run_time=t.duration / n)
 
         with self.voiceover("and exactly two shares are necessary") as t:
             self.play(
-                people[0].animate.set_fill(GREEN, opacity=0.5), run_time=t.duration / 2
+                people[0].animate.set_fill(GREEN, opacity=0.5), run_time=t.duration
             )
 
         with self.voiceover("to decrypt the complete secret. ") as t:
             self.play(
-                Transform(secret, Text("Secret", font_size=40).shift(LEFT * 4)),
+                Transform(secret, Text(secret_text, font_size=40).shift(LEFT * 4)),
                 people[1].animate.set_fill(GREEN, opacity=0.5),
                 run_time=t.duration,
             )
 
-        self.play(Unwrite(secret))
+        self.play(Unwrite(secret), people_group.animate.shift(LEFT * 2))
 
+        segment = len(secret_text) // n
         shares = [
-            Text(text, font_size=40)
-            for text in ["_Se cre t._", "Top cre t._", "Top _Se t._", "Top _Se cre"]
+            MarkupText(self.pm_hide(secret_text, i, segment), font_size=40)
+            for i in range(0, len(secret_text), segment)
         ]
         with self.voiceover(
             "The simplest solution would be to just give each person two thirds of the secret"
         ):
             for person, share in zip(people, shares):
-                share.next_to(person, ORIGIN)
+                share.next_to(person, RIGHT, buff=0.1)
                 self.play(Write(share), run_time=t.duration / n)
 
         with self.voiceover("but this gives each participant some information") as t:
@@ -74,3 +74,10 @@ class Top(VoiceoverScene):
                 self.play(Uncreate(person), run_time=t.duration / (n * 2))
 
         self.wait()
+
+    def pm_hide(self, text, start, length):
+        before = text[:start]
+        hidden = text[start : start + length]
+        after = text[start + length :]
+        pango_markup = f"{before}<span color='black'>{hidden}</span>{after}"
+        return pango_markup
