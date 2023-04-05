@@ -3,7 +3,7 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.coqui import CoquiService
 
-class Demo(VoiceoverScene):
+class Top(VoiceoverScene):
     def construct(self):
         self.set_speech_service(CoquiService())
         
