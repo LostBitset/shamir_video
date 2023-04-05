@@ -39,16 +39,24 @@ class Top(VoiceoverScene):
                 person.set_fill(RED, opacity=0.5)
                 self.play(Create(person), run_time=t.duration / n)
 
-        with self.voiceover("and exactly two shares are necessary") as t:
-            self.play(
-                people[0].animate.set_fill(GREEN, opacity=0.5), run_time=t.duration
-            )
+        need = 3
+        with self.voiceover("and exactly three shares are necessary") as t:
+            for i in range(need - 1):
+                self.play(
+                    people[i].animate.set_fill(GREEN, opacity=0.5),
+                    run_time=t.duration / (need - 1),
+                )
 
         with self.voiceover("to decrypt the complete secret. ") as t:
             self.play(
                 Transform(secret, Text(secret_text, font_size=40).shift(LEFT * 4)),
-                people[1].animate.set_fill(GREEN, opacity=0.5),
+                people[need - 1].animate.set_fill(GREEN, opacity=0.5),
                 run_time=t.duration,
+            )
+
+        with self.voiceover("There's a simple solution for needing two shares") as t:
+            self.play(
+                people[need - 1].animate.set_fill(RED, opacity=0.5), run_time=t.duration
             )
 
         self.play(Unwrite(secret), people_group.animate.shift(LEFT * 2))
@@ -58,9 +66,7 @@ class Top(VoiceoverScene):
             MarkupText(self.pm_hide(secret_text, i, segment), font_size=40)
             for i in range(0, len(secret_text), segment)
         ]
-        with self.voiceover(
-            "The simplest solution would be to just give each person two thirds of the secret"
-        ):
+        with self.voiceover("which is just giving each person part of the secret"):
             for person, share in zip(people, shares):
                 share.next_to(person, RIGHT, buff=0.1)
                 self.play(Write(share), run_time=t.duration / n)
@@ -72,6 +78,9 @@ class Top(VoiceoverScene):
             for person, share in zip(people, shares):
                 self.play(Unwrite(share), run_time=t.duration / (n * 2))
                 self.play(Uncreate(person), run_time=t.duration / (n * 2))
+
+        with self.voiceover("We need a different approach. ") as t:
+            self.wait(t.duration)
 
         self.wait()
 
