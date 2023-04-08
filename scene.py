@@ -99,7 +99,7 @@ def ashow(mobj):
     return mobj.animate.set_opacity(1)
 
 
-class Top(VoiceoverScene):
+class ExplainBasicPolynomialIdea(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
