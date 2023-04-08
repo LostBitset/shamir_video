@@ -92,6 +92,13 @@ class ExplainProblem(VoiceoverScene):
         return pango_markup
 
 
+def ahide(mobj):
+    return mobj.animate.set_opacity(0)
+
+def ashow(mobj):
+    return mobj.animate.set_opacity(1)
+
+
 class Top(VoiceoverScene):
     def construct(self):
         setup_speech(self)
@@ -125,5 +132,42 @@ class Top(VoiceoverScene):
                 self.play(Create(line), run_time=(t.duration/n) * line_time)
                 self.play(Create(dot), run_time=(t.duration/n) * (1-line_time))
                 dots_with_lines.append((dot, line))
+        
+        with self.voiceover(
+            """
+            Because, this is a second-degree polynomial, it can be completely
+            determined from any three points that lie on it. 
+            """.strip().replace("\n", "")
+        ) as t:
+            for to_hide in range(n):
+                dot, line = dots_with_lines[to_hide]
+                self.play(ahide(dot), run_time=0)
+                self.play(ahide(line), run_time=t.duration / (n * 3))
+                self.wait(t.duration / (n * 3))
+                self.play(ashow(line), run_time=t.duration / (n * 3))
+                self.play(ashow(dot), run_time=0)
+        
+        to_hide_transition = n - 2
+        with self.voiceover(
+            "This reconstruction process is where linear algebra comes in. "
+        ) as t:
+            bdot, bline = dots_with_lines[to_hide_transition]
+            self.play(ahide(bdot), run_time=0)
+            self.play(ahide(bline), run_time=t.duration/(n*3))
+            self.remove(bdot, bline)
+
+        self.wait()
+
+        rmduration = 1
+        self.play(
+            Uncreate(graph),
+            *( Uncreate(line) for (_, line) in dots_with_lines if line is not bline ),
+            run_time=rmduration/2
+        )
+        self.play(
+            *( Uncreate(dot) for (dot, _) in dots_with_lines if dot is not bdot ),
+            run_time=0
+        )
+        self.play(Uncreate(ax), run_time=rmduration/2)
 
         self.wait()
