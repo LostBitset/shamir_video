@@ -171,3 +171,67 @@ class ExplainBasicPolynomialIdea(VoiceoverScene):
         self.play(Uncreate(ax), run_time=rmduration/2)
 
         self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        polynomialfn = lambda shift: MathTex(
+            r"f(x) = a_2 x^2 + a_1 x + a_0"
+        ).shift(shift)
+        middle_polynomial = polynomialfn(ORIGIN)
+        with self.voiceover("Here's our polynomial with unknown coefficients. ") as t:
+            self.play(Write(middle_polynomial), run_time=t.duration)
+        
+        up_polynomial, dn_polynomial = polynomialfn(UP), polynomialfn(DOWN)
+        with self.voiceover("We have three points that were interpolating") as t:
+            self.play(
+                Write(up_polynomial),
+                Write(dn_polynomial),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("so let's sub in the known x and y pairs. ") as t:
+            self.play(
+                Transform(up_polynomial, MathTex(
+                    r"y_0 = a_2 x_0^2 + a_1 x_0 + a_0",
+                ).shift(UP)),
+                Transform(middle_polynomial, MathTex(
+                    r"y_1 = a_2 x_1^2 + a_1 x_1 + a_0",
+                ).shift(ORIGIN)),
+                Transform(dn_polynomial, MathTex(
+                    r"y_2 = a_2 x_1^2 + a_1 x_1 + a_0",
+                ).shift(DOWN)),
+                run_time=t.duration,
+            )
+        
+        with self.voiceover("This is a linear system of equations") as t:
+            self.wait(t.duration)
+        
+        matrix_form = MathTex(
+            r"""
+            \begin{bmatrix}
+            x_0^2 & x_0 & 1 \\
+            x_1^2 & x_1 & 1 \\
+            x_2^2 & x_2 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+            a_0 \\ a_1 \\ a_2
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            y_0 \\ y_1 \\ y_2
+            \end{bmatrix}
+            """.strip().replace("\n", "")
+        )
+        with self.voiceover("So let's represent it as a matrix") as t:
+            self.play(
+                *(
+                    Unwrite(i)
+                    for i in [up_polynomial, middle_polynomial, dn_polynomial]
+                ),
+                run_time=t.duration/2
+            )
+            self.play()
+
+        self.wait()
