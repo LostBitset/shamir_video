@@ -6,6 +6,8 @@ from manim_voiceover.services.coqui import CoquiService
 speech_service = CoquiService()
 setup_speech = lambda obj: obj.set_speech_service(speech_service)
 
+n, need = 4, 3
+
 
 class ExplainProblem(VoiceoverScene):
     def construct(self):
@@ -28,7 +30,6 @@ class ExplainProblem(VoiceoverScene):
                 run_time=t.duration,
             )
 
-        n = 4
         people = None
         with self.voiceover("there are four total people with shares") as t:
             people = [Circle(radius=0.8) for _ in range(n)]
@@ -39,7 +40,6 @@ class ExplainProblem(VoiceoverScene):
                 person.set_fill(RED, opacity=0.5)
                 self.play(Create(person), run_time=t.duration / n)
 
-        need = 3
         with self.voiceover("and exactly three shares are necessary") as t:
             for i in range(need - 1):
                 self.play(
@@ -97,19 +97,33 @@ class Top(VoiceoverScene):
         setup_speech(self)
 
         ax = Axes()
-        graph = ax.plot(lambda x: (0.35 * (x**2)) + x + 1, color=PURPLE_B)
+        func = lambda x: (0.35 * (x**2)) + x + 1
+        graph = ax.plot(func, color=PURPLE_B)
         with self.voiceover("Let's consider a second-degree polynomial") as t:
             self.play(Create(ax), run_time=t.duration / 2)
             self.play(Create(graph), run_time=t.duration / 2)
 
+        func = lambda x: -2
         with self.voiceover("We'll set the constant term equal to our secret") as t:
-            constant_graph = ax.plot(lambda x: -2, color=PURPLE_B)
+            constant_graph = ax.plot(func, color=PURPLE_B)
             self.play(Transform(graph, constant_graph), run_time=t.duration)
 
+        func = lambda x: (0.2 * (x**2)) + (0.35 * x) - 2
         with self.voiceover("The other coefficients will be chosen randomly") as t:
-            real_graph = ax.plot(
-                lambda x: (0.2 * (x**2)) + (0.35 * x) - 2, color=PURPLE_B
-            )
+            real_graph = ax.plot(func, color=PURPLE_B)
             self.play(Transform(graph, real_graph), run_time=t.duration)
+
+        line_time = 0.85
+        dots_with_lines = []
+        with self.voiceover(
+            "Now, shares will consist of points that appear on the polynomial"
+        ) as t:
+            for x in range(1, n + 1):
+                point = ax.coords_to_point(x, func(x))
+                dot = Dot(point)
+                line = ax.get_vertical_line(point)
+                self.play(Create(line), run_time=(t.duration/n) * line_time)
+                self.play(Create(dot), run_time=(t.duration/n) * (1-line_time))
+                dots_with_lines.append((dot, line))
 
         self.wait()
