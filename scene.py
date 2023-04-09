@@ -137,7 +137,7 @@ class ExplainBasicPolynomialIdea(VoiceoverScene):
             """
             Because, this is a second-degree polynomial, it can be completely
             determined from any three points that lie on it. 
-            """.strip().replace("\n", "")
+            """.strip().replace("\n", " ")
         ) as t:
             for to_hide in range(n):
                 dot, line = dots_with_lines[to_hide]
@@ -172,7 +172,7 @@ class ExplainBasicPolynomialIdea(VoiceoverScene):
 
         self.wait()
 
-class Top(VoiceoverScene):
+class ExplainPolynomialInterpolation(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
@@ -184,7 +184,7 @@ class Top(VoiceoverScene):
             self.play(Write(middle_polynomial), run_time=t.duration)
         
         up_polynomial, dn_polynomial = polynomialfn(UP), polynomialfn(DOWN)
-        with self.voiceover("We have three points that were interpolating") as t:
+        with self.voiceover("We have three points that we're interpolating") as t:
             self.play(
                 Write(up_polynomial),
                 Write(dn_polynomial),
@@ -211,9 +211,9 @@ class Top(VoiceoverScene):
         matrix_form = MathTex(
             r"""
             \begin{bmatrix}
-            x_0^2 & x_0 & 1 \\
-            x_1^2 & x_1 & 1 \\
-            x_2^2 & x_2 & 1
+            1 & x_0 & x_0^2 \\
+            1 & x_1 & x_1^2 \\
+            1 & x_2 & x_2^2
             \end{bmatrix}
             \begin{bmatrix}
             a_0 \\ a_1 \\ a_2
@@ -222,9 +222,9 @@ class Top(VoiceoverScene):
             \begin{bmatrix}
             y_0 \\ y_1 \\ y_2
             \end{bmatrix}
-            """.strip().replace("\n", "")
+            """.strip().replace("\n", " ")
         )
-        with self.voiceover("So let's represent it as a matrix") as t:
+        with self.voiceover("so let's represent it as a matrix. ") as t:
             self.play(
                 *(
                     Unwrite(i)
@@ -232,6 +232,50 @@ class Top(VoiceoverScene):
                 ),
                 run_time=t.duration/2
             )
-            self.play()
+            self.play(Write(matrix_form), run_time=t.duration/2)
+
+        with self.voiceover(
+            """
+            We can find the coefficients by solving this system,
+            which is something we already know how to do. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.wait(t.duration)
+        
+        general_form = MathTex(
+            r"""
+            \begin{bmatrix}
+            1 & x_0^1 & \cdots & x_0^n \\
+            1 & x_1^1 & \cdots & x_1^n \\
+            \vdots & \vdots & \ddots & \vdots \\
+            1 & x_n^1 & \cdots & x_n^n
+            \end{bmatrix}
+            \begin{bmatrix}
+            a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_n
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            y_0 \\ y_1 \\ y_2 \\ \vdots \\ y_n
+            \end{bmatrix}
+            """
+        )
+        with self.voiceover(
+            "Here it is in the general case, for an n-degree polynomial. "
+        ) as t:
+            self.play(Unwrite(matrix_form), run_time=t.duration/2)
+            self.play(Write(general_form), run_time=t.duration/2)
+        
+        with self.voiceover(
+            """
+            This method does actually work,
+            but it isn't possible in the real world,
+            because it relies on us being able to represent real numbers
+            with perfect precision. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.wait(t.duration)
+        
+        with self.voiceover("This isn't something we can actually do. ") as t:
+            self.play(Unwrite(general_form), run_time=t.duration)
 
         self.wait()
