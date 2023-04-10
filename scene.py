@@ -9,6 +9,17 @@ setup_speech = lambda obj: obj.set_speech_service(speech_service)
 n, need = 4, 3
 
 
+def scene_card(scene, part, text):
+    card = Text(f"Part {part}: {text}", font_size=80)
+    scene.play(Create(card))
+    scene.wait()
+    scene.play(Uncreate(card))
+    scene.wait(0.5)
+
+class SceneCard1(Scene):
+    def construct(self):
+        scene_card(self, 1, "Secret Sharing")
+
 class ExplainProblem(VoiceoverScene):
     def construct(self):
         setup_speech(self)
@@ -345,6 +356,10 @@ class ExplainBrokenVariant(VoiceoverScene):
 
         self.wait()
 
+class SceneCard2(Scene):
+    def construct(self):
+        scene_card(self, 2, "Rings and Fields")
+
 class ExplainBasicAlgebraicStructures(VoiceoverScene):
     def construct(self):
         setup_speech(self)
@@ -519,3 +534,7 @@ class LooselyExplainWhyIntegersDontWork(VoiceoverScene):
         self.play(Unwrite(detailed))
 
         self.wait()
+
+class SceneCard3(Scene):
+    def construct(self):
+        scene_card(self, 3, "Galois Fields")
