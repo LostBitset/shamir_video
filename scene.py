@@ -466,3 +466,56 @@ class ExplainBasicAlgebraicStructures(VoiceoverScene):
         self.play(Unwrite(field_text))
 
         self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        ax = Axes()
+        func = lambda x: (0.2 * (x**2)) + (0.35 * x) - 2
+        graph = ax.plot(func, color=PURPLE_B)
+        with self.voiceover(
+            """
+            I'm not going to try to explain it here, since it's just a bunch
+            of number theory I don't understand
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.play(Create(ax), run_time=t.duration / 2)
+            self.play(Create(graph), run_time=t.duration / 2)
+
+        func = lambda x: (0.25 * (x**2)) + (0.5 * x) - 2
+        with self.voiceover(
+            """
+            but the trick is that using integer coefficients
+            limits the space of what polynomials are allowed.
+            """.strip().replace("\n", " ")
+        ) as t:
+            real_real_graph = ax.plot(func, color=PURPLE_B)
+            self.play(Transform(graph, real_real_graph), run_time=t.duration)
+        
+        with self.voiceover(
+            """
+            This allows someone to take some shares and generate a very short list of possible
+            polynomials that fit with both their known shares and the integer coefficient
+            restriction. 
+            This is why just using integers doesn't work either. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.wait(t.duration)
+        
+        rmduration = 1
+        self.play(Unwrite(graph), run_time=rmduration/2)
+        self.play(Unwrite(ax), run_time=rmduration/2)
+
+        detailed = MathTex(r"x \in \mathbb{Z} \implies f(x) \in \mathbb{Z}", font_size=100)
+        with self.voiceover(
+            "To be specific, we've restricted the polynomial to be an integer at each integer value. "
+        ) as t:
+            self.play(Write(detailed), run_time=t.duration)
+
+        with self.voiceover("This is what integers being rings actually caused - problems. ") as t:
+            self.wait(t.duration)
+
+        self.play(Unwrite(detailed))
+
+        self.wait()
