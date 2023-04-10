@@ -344,3 +344,125 @@ class ExplainBrokenVariant(VoiceoverScene):
             self.play(Uncreate(ax), run_time=rmduration/2)
 
         self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        operations = [
+            MathTex("+", font_size=100).shift(2 * (LEFT + UP)),
+            MathTex("-", font_size=100).shift(2 * (RIGHT + UP)),
+            MathTex(r"\times", font_size=100).shift(2 * (LEFT + DOWN)),
+        ]
+        with self.voiceover(
+            """
+            When some sort of mathematical object yields reasonable
+            definitions of addition, subtraction, and multiplication 
+            """.strip().replace("\n", " ")
+        ) as t:
+            for mobj in operations:
+                self.play(Write(mobj), run_time=t.duration / (len(operations)))
+        
+        ring_text = Text("Ring", font_size=80)
+        with self.voiceover("we call it a") as t:
+            self.play(Write(ring_text), run_time=t.duration)
+        
+        with self.voiceover("ring. ") as t:
+            self.wait(t.duration)
+        
+        place_polynomial = lambda tex: MathTex(tex).shift(2 * (RIGHT + DOWN))
+        polynomial = place_polynomial("x")
+        with self.voiceover("Polynomials involve") as t:
+            self.play(Create(polynomial), run_time=t.duration)
+        
+        with self.voiceover("using multiplication") as t:
+            self.play(
+                Transform(polynomial, place_polynomial("a_i x^i")),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("and addition") as t:
+            self.play(
+                Transform(polynomial, place_polynomial("y = \sum_{i=0}^n a_i x^i")),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("so a polynomial can be created out of any ring. ") as t:
+            self.play(
+                Transform(ring_text, Text("For any ring...", font_size=80)),
+                run_time=t.duration
+            )
+        
+        with self.voiceover(
+            "The integers form a ring, so it makes sense to define polynomials with them. "
+        ) as t:
+            self.play(
+                Transform(ring_text, MathTex(r"x, y, a_i \in \mathbb{Z}", font_size=80)),
+                run_time=t.duration
+            )
+
+        with self.voiceover(
+            """
+            The integer ring is a closed system, so a polynomial made with integers
+            will always yield integers.
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.play(Unwrite(polynomial), Unwrite(ring_text), run_time=t.duration)
+        
+        division = MathTex(r"\div", font_size=100).shift(2 * (RIGHT + DOWN))
+        operations.append(division)
+        with self.voiceover(
+            "However, polynomial interpolation requires a division operation. "
+        ) as t:
+            self.play(Write(division), run_time=t.duration)
+        
+        with self.voiceover(
+            "A mathematical object equipped with all four basic operations"
+        ) as t:
+            self.wait(t.duration)
+        
+        field_text = Text("Field", font_size=80)
+        with self.voiceover("is called a field. ") as t:
+            self.play(Write(field_text), run_time=t.duration)
+        
+        with self.voiceover(
+            """
+            The integers do not form a field, because you can divide
+            two integers and get something that isn't an integer.
+            It's not a closed system. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.wait(t.duration)
+        
+        with self.voiceover(
+            """
+            In other words, when we choose integer coefficients, we aren't actually dealing
+            with only integers. All of our math is still defined in terms of
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.wait(t.duration)
+        
+        with self.voiceover("the real numbers,") as t:
+            self.play(
+                Transform(field_text, MathTex(r"\mathbb{R}", font_size=80)),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("which do form a field. ") as t:
+            self.wait(t.duration)
+        
+        with self.voiceover("The official term for this is") as t:
+            self.wait(t.duration)
+        
+        with self.voiceover("kludgy hacky worthless screwup garbage. ") as t:
+            self.play(
+                Transform(field_text, Text("KHWSG", font_size=80)),
+                *( Unwrite(i) for i in operations ),
+                run_time=t.duration
+            )
+        
+        self.wait(0.5)
+        
+        self.play(Unwrite(field_text))
+
+        self.wait()
