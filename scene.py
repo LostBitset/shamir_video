@@ -345,7 +345,7 @@ class ExplainBrokenVariant(VoiceoverScene):
 
         self.wait()
 
-class Top(VoiceoverScene):
+class ExplainBasicAlgebraicStructures(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
