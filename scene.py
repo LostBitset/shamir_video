@@ -467,7 +467,7 @@ class ExplainBasicAlgebraicStructures(VoiceoverScene):
 
         self.wait()
 
-class Top(VoiceoverScene):
+class LooselyExplainWhyIntegersDontWork(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
