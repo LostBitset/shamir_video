@@ -279,3 +279,68 @@ class ExplainPolynomialInterpolation(VoiceoverScene):
             self.play(Unwrite(general_form), run_time=t.duration)
 
         self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        ax = Axes()
+        func = lambda x: (0.35 * (x**2)) + x + 1
+        graph = ax.plot(func, color=PURPLE_B)
+        with self.voiceover(
+            "Let's make a small adjustment to the way we generate our polynomial. "
+        ) as t:
+            self.play(Create(ax), run_time=t.duration / 2)
+            self.play(Create(graph), run_time=t.duration / 2)
+
+        func = lambda x: -2
+        with self.voiceover(
+            "We'll still set the constant term equal to our secret"
+        ) as t:
+            constant_graph = ax.plot(func, color=PURPLE_B)
+            self.play(Transform(graph, constant_graph), run_time=t.duration)
+
+        func = lambda x: (0.2 * (x**2)) + (0.35 * x) - 2
+        with self.voiceover("and choose the remaining coefficients at random") as t:
+            real_graph = ax.plot(func, color=PURPLE_B)
+            self.play(Transform(graph, real_graph), run_time=t.duration)
+        
+        self.wait(0.25)
+
+        func = lambda x: (0.25 * (x**2)) + (0.5 * x) - 2
+        with self.voiceover(
+            "but this time they'll be random integers. "
+        ) as t:
+            real_real_graph = ax.plot(func, color=PURPLE_B)
+            self.play(Transform(graph, real_real_graph), run_time=t.duration)
+        
+        line_time = 0.85
+        dots_with_lines = []
+        with self.voiceover(
+            """
+            This ensures that the shares generated will be integers as well,
+            keeping us from having to store them with impossible precision. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            for x in range(1, n + 1):
+                point = ax.coords_to_point(x, func(x))
+                dot = Dot(point)
+                line = ax.get_vertical_line(point)
+                self.play(Create(line), run_time=(t.duration/n) * line_time)
+                self.play(Create(dot), run_time=(t.duration/n) * (1-line_time))
+                dots_with_lines.append((dot, line))
+
+        with self.voiceover("Formalizing why requires a step back. ") as t:
+            rmduration = t.duration
+            self.play(
+                Uncreate(graph),
+                *( Uncreate(line) for (_, line) in dots_with_lines ),
+                run_time=rmduration/2
+            )
+            self.play(
+                *( Uncreate(dot) for (dot, _) in dots_with_lines ),
+                run_time=0
+            )
+            self.play(Uncreate(ax), run_time=rmduration/2)
+
+        self.wait()
