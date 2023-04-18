@@ -779,7 +779,7 @@ class ExplainGaloisFields(VoiceoverScene):
 
         self.wait()
 
-class Top(VoiceoverScene):
+class OutroScene(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
