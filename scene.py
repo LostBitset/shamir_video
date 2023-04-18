@@ -710,7 +710,7 @@ class ExplainPrimeFields(VoiceoverScene):
 
         self.wait()
 
-class Top(VoiceoverScene):
+class ExplainGaloisFields(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
