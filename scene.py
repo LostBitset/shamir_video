@@ -538,3 +538,18 @@ class LooselyExplainWhyIntegersDontWork(VoiceoverScene):
 class SceneCard3(Scene):
     def construct(self):
         scene_card(self, 3, "Galois Fields")
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        with self.voiceover(
+                "Let's try and find a field that, unlike the real numbers, is finite. "
+        ) as t:
+            self.wait(t.duration)
+        
+        modular_eqn = MathTex(r"3 + 4 = 7", font_size=90)
+        with self.voiceover("Let's begin by reviewing modular arithmetic. ") as t:
+            self.play(Write(modular_eqn))
+
+        self.wait()
