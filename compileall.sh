@@ -3,5 +3,6 @@
 echo "Please note that this script does actually render anything. "
 echo "It just concatenates generated scenes together in the correct order. "
 
+rm output.mp4
 python makesceneorder.py
-ffmpeg -f concat -i sceneorder.txt -c copy output.mp4
+ffmpeg -i sceneorder.txt -c copy output.mp4
