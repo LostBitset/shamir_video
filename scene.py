@@ -1,6 +1,7 @@
 from manim import *
 
 from manim_voiceover import VoiceoverScene
+from manim_voiceover.services.gtts import GTTSService
 from manim_voiceover.services.coqui import CoquiService
 
 speech_service = CoquiService()
@@ -10,13 +11,15 @@ n, need = 4, 3
 
 
 def scene_card(scene, part, text):
-    card = Text(f"Part {part}: {text}", font_size=80)
-    scene.play(Create(card))
+    setup_speech(scene)
+    with scene.voiceover(f"Part {part}. ") as t:
+        card = Text(f"Part {part}: {text}", font_size=80)
+        scene.play(Create(card), run_time=t.duration)
     scene.wait()
     scene.play(Uncreate(card))
     scene.wait(0.5)
 
-class SceneCard1(Scene):
+class SceneCard1(VoiceoverScene):
     def construct(self):
         scene_card(self, 1, "Secret Sharing")
 
@@ -202,7 +205,7 @@ class ExplainPolynomialInterpolation(VoiceoverScene):
                 run_time=t.duration
             )
         
-        with self.voiceover("so let's sub in the known x and y pairs. ") as t:
+        with self.voiceover("so let's sub in the known ex and why pairs. ") as t:
             self.play(
                 Transform(up_polynomial, MathTex(
                     r"y_0 = a_2 x_0^2 + a_1 x_0 + a_0",
@@ -262,16 +265,16 @@ class ExplainPolynomialInterpolation(VoiceoverScene):
             1 & x_n^1 & \cdots & x_n^n
             \end{bmatrix}
             \begin{bmatrix}
-            a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_n
+            a_0 \\ a_1 \\ \vdots \\ a_n
             \end{bmatrix}
             =
             \begin{bmatrix}
-            y_0 \\ y_1 \\ y_2 \\ \vdots \\ y_n
+            y_0 \\ y_1 \\ \vdots \\ y_n
             \end{bmatrix}
             """
         )
         with self.voiceover(
-            "Here it is in the general case, for an n-degree polynomial. "
+            "Here it is in the general case, for an en-degree polynomial. "
         ) as t:
             self.play(Unwrite(matrix_form), run_time=t.duration/2)
             self.play(Write(general_form), run_time=t.duration/2)
@@ -356,7 +359,7 @@ class ExplainBrokenVariant(VoiceoverScene):
 
         self.wait()
 
-class SceneCard2(Scene):
+class SceneCard2(VoiceoverScene):
     def construct(self):
         scene_card(self, 2, "Rings and Fields")
 
@@ -379,12 +382,9 @@ class ExplainBasicAlgebraicStructures(VoiceoverScene):
                 self.play(Write(mobj), run_time=t.duration / (len(operations)))
         
         ring_text = Text("Ring", font_size=80)
-        with self.voiceover("we call it a") as t:
+        with self.voiceover("we call it a ring. ") as t:
             self.play(Write(ring_text), run_time=t.duration)
-        
-        with self.voiceover("ring. ") as t:
-            self.wait(t.duration)
-        
+
         place_polynomial = lambda tex: MathTex(tex).shift(2 * (RIGHT + DOWN))
         polynomial = place_polynomial("x")
         with self.voiceover("Polynomials involve") as t:
@@ -469,7 +469,7 @@ class ExplainBasicAlgebraicStructures(VoiceoverScene):
         with self.voiceover("The official term for this is") as t:
             self.wait(t.duration)
         
-        with self.voiceover("kludgy hacky worthless screwup garbage. ") as t:
+        with self.voiceover("kludgy hacky worthless screw-up garbage. ") as t:
             self.play(
                 Transform(field_text, Text("KHWSG", font_size=80)),
                 *( Unwrite(i) for i in operations ),
@@ -528,14 +528,14 @@ class LooselyExplainWhyIntegersDontWork(VoiceoverScene):
         ) as t:
             self.play(Write(detailed), run_time=t.duration)
 
-        with self.voiceover("This is what integers being rings actually caused - problems. ") as t:
+        with self.voiceover("This is what integers being rings actually caused. Problems. ") as t:
             self.wait(t.duration)
 
         self.play(Unwrite(detailed))
 
         self.wait()
 
-class SceneCard3(Scene):
+class SceneCard3(VoiceoverScene):
     def construct(self):
         scene_card(self, 3, "Galois Fields")
 
@@ -553,7 +553,7 @@ class ExplainPrimeFields(VoiceoverScene):
             self.play(Write(modular_eqn), run_time=t.duration)
         
         with self.voiceover(
-            "We can do math \"modulo\" some number n, where numbers essentially wrap around"
+            "We can do math \"modulo\" some number enn, where numbers essentially wrap around"
         ) as t:
             self.play(
                 Transform(
@@ -577,8 +577,8 @@ class ExplainPrimeFields(VoiceoverScene):
         cycle_eqn = cycle_fmt(0)
         with self.voiceover(
             """
-            When working modulo n, no matter what,
-            we only have n possible numbers to deal with.
+            When working modulo enn, no matter what,
+            we only have enn possible numbers to deal with.
             In other words, we are operating on a finite
             set of values. 
             """.strip().replace("\n", " ")
@@ -628,7 +628,7 @@ class ExplainPrimeFields(VoiceoverScene):
             self.play(Write(composite_eqn), run_time=t.duration)
         
         with self.voiceover(
-            "Finding x here, which is equivalent to dividing one by two, is impossible. "
+            "Finding ex here, which is equivalent to dividing one by two, is impossible. "
         ) as t:
             self.wait(t.duration)
         
@@ -644,7 +644,7 @@ class ExplainPrimeFields(VoiceoverScene):
                 run_time=t.duration
             )
         
-        with self.voiceover("and let's just solve for what a over b is. ") as t:
+        with self.voiceover("and let's just solve for what ay over bee is. ") as t:
             self.play(
                 Transform(
                     composite_eqn,
@@ -657,7 +657,7 @@ class ExplainPrimeFields(VoiceoverScene):
             )
         
         with self.voiceover(
-            "We can see that if x divides into n, we have to end up with zero instead of a. "
+            "We can see that if ex divides into enn, we have to end up with zero instead of ay. "
         ) as t:
             self.play(
                 Transform(
@@ -670,7 +670,7 @@ class ExplainPrimeFields(VoiceoverScene):
                 run_time=t.duration
             )
 
-        with self.voiceover("Thus, we need n to be prime. ") as t:
+        with self.voiceover("Thus, we need enn to be prime. ") as t:
             self.wait(t.duration)
         
         self.play(Unwrite(composite_eqn))
@@ -684,7 +684,7 @@ class ExplainPrimeFields(VoiceoverScene):
         
         prime_field = MathTex("\mathbb{Z} \mod p", font_size=100)
         with self.voiceover(
-            "That's it. The integers, modulo some prime p, form a finite field. "
+            "That's it. The integers, modulo some prime pee, form a finite field. "
         ) as t:
             self.play(
                 Write(prime_field),
@@ -692,21 +692,13 @@ class ExplainPrimeFields(VoiceoverScene):
             )
         
         with self.voiceover(
-            "We typically call these \"prime fields\", and write them like this. "
+            "We typically call these \"prime fields\". "
         ) as t:
-            self.play(
-                Transform(
-                    prime_field,
-                    MathTex(r"\mathbb{Z}_p", font_size=100)
-                ),
-                run_time=t.duration
-            )
-        
-        rmduration = 2
-        to_rm = [prime_field, *operations]
-        rm_time = rmduration / len(to_rm)
-        for i in to_rm:
-            self.play(Unwrite(i), run_time=rm_time)
+            rmduration = t.duration
+            to_rm = [prime_field, *operations]
+            rm_time = rmduration / len(to_rm)
+            for i in to_rm:
+                self.play(Unwrite(i), run_time=rm_time)
 
         self.wait()
 
@@ -728,7 +720,7 @@ class ExplainGaloisFields(VoiceoverScene):
         with self.voiceover(
             """
             The number of elements in a finite field must be
-            a prime number p to some natural power m.
+            a prime number pee to some natural power emm.
             """.strip().replace("\n", " ")
         ) as t:
             self.play(Write(gf), run_time=t.duration)
@@ -737,7 +729,7 @@ class ExplainGaloisFields(VoiceoverScene):
             self.wait(t.duration)
         
         with self.voiceover(
-            "We call any field with a finite number of elements a Galois field. "
+            "We call any field with a finite number of elements a Gal-wah field. "
         ) as t:
             self.play(
                 Transform(
@@ -747,14 +739,13 @@ class ExplainGaloisFields(VoiceoverScene):
                 run_time=t.duration
             )
 
-        with self.voiceover("So, what happens when m isn't equal to one?") as t:
+        with self.voiceover("So, what happens when emm is not equal to one?") as t:
             self.wait(t.duration)
         
         with self.voiceover(
             """
             Those are called extension fields, and are incredibly important
-            to cryptography, closely tied to linear algebra, and unbelievably beautiful.
-            But that's for part 2. 
+            to cryptography. 
             """):
             self.wait(t.duration)
         
@@ -775,7 +766,17 @@ class ExplainGaloisFields(VoiceoverScene):
             after Adi Shamir. 
             """.strip().replace("\n", " ")
         ) as t:
-            self.play(Unwrite(gf), run_time=t.duration)
+            self.play(
+                Transform(
+                    gf,
+                    Text("Shamir's Secret Sharing", font_size=50)
+                ),
+                run_time=t.duration
+            )
+
+        self.wait()
+
+        self.play(Unwrite(gf))
 
         self.wait()
 
@@ -848,10 +849,12 @@ class OutroScene(VoiceoverScene):
 
         self.wait()
 
-        part2 = Text("Part 2: AES (and maybe GCM)", font_size=final_font_size-10)
-        with self.voiceover("See you in part 2!") as t:
-            self.play(Write(part2), run_time=t.duration / 2)
-        
-        self.play(Unwrite(part2))
+        credit = Text(
+            "Made with Manim and FFmpeg",
+            font_size=50
+        )
+        self.play(Write(credit))
+        self.wait()
+        self.play(Unwrite(credit))
 
         self.wait()
