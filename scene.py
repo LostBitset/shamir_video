@@ -549,7 +549,163 @@ class Top(VoiceoverScene):
             self.wait(t.duration)
         
         modular_eqn = MathTex(r"3 + 4 = 7", font_size=90)
-        with self.voiceover("Let's begin by reviewing modular arithmetic. ") as t:
-            self.play(Write(modular_eqn))
+        with self.voiceover("This necessitates modular arithmetic. ") as t:
+            self.play(Write(modular_eqn), run_time=t.duration)
+        
+        with self.voiceover(
+            "We can do math \"modulo\" some number n, where numbers essentially wrap around"
+        ) as t:
+            self.play(
+                Transform(
+                    modular_eqn,
+                    MathTex(r"3 + 4 \equiv 2 \mod 5", font_size=90)
+                ),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("so here, seven reduces to two modulo five. ") as t:
+            self.wait(t.duration)
+        
+        self.play(Unwrite(modular_eqn))
+
+        m = 5
+        cycles = 11
+        cycle_fmt = lambda i: MathTex(
+            f"{i % m} + 1 \equiv {(i + 1) % m} \mod {m}",
+            font_size=90
+        )
+        cycle_eqn = cycle_fmt(0)
+        with self.voiceover(
+            """
+            When working modulo n, no matter what,
+            we only have n possible numbers to deal with.
+            In other words, we are operating on a finite
+            set of values. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            cycle_time = t.duration / cycles
+            for i in range(cycles):
+                if i == 0:
+                    self.play(
+                        Write(cycle_eqn),
+                        run_time=cycle_time
+                    )
+                self.play(
+                    Transform(cycle_eqn, cycle_fmt(i)),
+                    run_time=cycle_time
+                )
+
+        with self.voiceover(
+            "This lets us define addition, subtraction, and multiplication"
+        ) as t:
+            self.play(Unwrite(cycle_eqn))
+
+        operations = [
+            MathTex("+", font_size=100).shift(2 * (LEFT + UP)),
+            MathTex("-", font_size=100).shift(2 * (RIGHT + UP)),
+            MathTex(r"\times", font_size=100).shift(2 * (LEFT + DOWN)),
+        ]
+        with self.voiceover(
+            """
+            making the integers modulo any number form a ring, not a field. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            for mobj in operations:
+                self.play(Write(mobj), run_time=t.duration / (len(operations)))
+        
+        with self.voiceover(
+            "Division is necessarily defined as the inverse of multiplication"
+        ) as t:
+            self.wait(t.duration)
+        
+        composite_eqn = MathTex(
+            r"x \cdot 2 \equiv 1 \mod 4",
+            font_size=90
+        )
+        with self.voiceover(
+            "and sometimes, this just isn't possible. "
+        ) as t:
+            self.play(Write(composite_eqn), run_time=t.duration)
+        
+        with self.voiceover(
+            "Finding x here, which is equivalent to dividing one by two, is impossible. "
+        ) as t:
+            self.wait(t.duration)
+        
+        with self.voiceover("Here's the general rule that defines division") as t:
+            self.play(
+                Transform(
+                    composite_eqn,
+                    MathTex(
+                        r"\frac{a}{b} \cdot b \equiv a \mod n",
+                        font_size=90
+                    )
+                ),
+                run_time=t.duration
+            )
+        
+        with self.voiceover("and let's just solve for what a over b is. ") as t:
+            self.play(
+                Transform(
+                    composite_eqn,
+                    MathTex(
+                        r"x \cdot b \equiv a \mod n",
+                        font_size=90
+                    )
+                ),
+                run_time=t.duration
+            )
+        
+        with self.voiceover(
+            "We can see that if x divides into n, we have to end up with zero instead of a. "
+        ) as t:
+            self.play(
+                Transform(
+                    composite_eqn,
+                    MathTex(
+                        r"x \cdot b \equiv 0 \mod n",
+                        font_size=90
+                    )
+                ),
+                run_time=t.duration
+            )
+
+        with self.voiceover("Thus, we need n to be prime. ") as t:
+            self.wait(t.duration)
+        
+        self.play(Unwrite(composite_eqn))
+
+        division = MathTex(r"\div", font_size=100).shift(2 * (RIGHT + DOWN))
+        operations.append(division)
+        with self.voiceover(
+            "This is actually all we need to ensure division is always possible. "
+        ) as t:
+            self.play(Write(division), run_time=t.duration)
+        
+        prime_field = MathTex("\mathbb{Z} \mod p", font_size=100)
+        with self.voiceover(
+            "That's it. The integers, modulo some prime p, form a finite field. "
+        ) as t:
+            self.play(
+                Write(prime_field),
+                run_time=t.duration
+            )
+        
+        with self.voiceover(
+            "We typically call these \"prime fields\", and write them like this. "
+        ) as t:
+            self.play(
+                Transform(
+                    prime_field,
+                    MathTex(r"\mathbb{Z}_p", font_size=100)
+                ),
+                run_time=t.duration
+            )
+        
+        rmduration = 2
+        to_rm = [prime_field, *operations]
+        rm_time = rmduration / len(to_rm)
+        for i in to_rm:
+            self.play(Unwrite(i), run_time=rm_time)
 
         self.wait()
