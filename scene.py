@@ -778,3 +778,80 @@ class ExplainGaloisFields(VoiceoverScene):
             self.play(Unwrite(gf), run_time=t.duration)
 
         self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        ax = Axes()
+        func = lambda x: (0.35 * (x**2)) + x + 1
+        graph = ax.plot(func, color=PURPLE_B)
+        with self.voiceover(
+            """
+            The key insight came from polynomial interpolation, a very numerical idea
+            from the world of linear algebra. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.play(Create(ax), run_time=t.duration / 2)
+            self.play(Create(graph), run_time=t.duration / 2)
+
+        func = lambda x: (0.2 * (x**2)) + (0.35 * x) - 2
+        with self.voiceover("But we also needed to change tack") as t:
+            real_graph = ax.plot(func, color=PURPLE_B)
+            self.play(Transform(graph, real_graph), run_time=t.duration)
+
+        with self.voiceover("and leave behind the concrete") as t:
+            self.play(Uncreate(ax), run_time=t.duration / 2)
+            self.play(Uncreate(graph), run_time=t.duration / 2)
+        
+        operations = [
+            MathTex("+", font_size=100).shift(2 * (LEFT + UP)),
+            MathTex("-", font_size=100).shift(2 * (RIGHT + UP)),
+            MathTex(r"\times", font_size=100).shift(2 * (LEFT + DOWN)),
+        ]
+        with self.voiceover(
+            """
+            venturing into the world of abstract algebra,
+            with rings and fields. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            for mobj in operations:
+                self.play(Write(mobj), run_time=t.duration / (len(operations)))
+
+        modulo_stuff = MathTex(
+            r"x \cdot b \equiv 0 \mod n",
+            font_size=90
+        )
+        with self.voiceover(
+            "But we still needed the tiniest bit of number theory"
+        ) as t:
+            self.play(Write(modulo_stuff), run_time=t.duration)
+        
+        with self.voiceover("leading us eventually to a solution") as t:
+            rmduration = t.duration
+            to_rm = [modulo_stuff, *operations]
+            rm_time = rmduration / len(to_rm)
+            for i in to_rm:
+                self.play(Unwrite(i), run_time=rm_time)
+
+        final_font_size = 65
+        solution = Tex(
+            "\emph{Polynomial Interpolation in $GF(p)$}",
+            font_size=final_font_size
+        )
+        with self.voiceover(
+            "far simpler than this little journey would suggest. "
+        ) as t:
+            self.play(Write(solution), run_time=t.duration / 2)
+
+        self.play(Unwrite(solution))
+
+        self.wait()
+
+        part2 = Text("Part 2: AES (and maybe GCM)", font_size=final_font_size-10)
+        with self.voiceover("See you in part 2!") as t:
+            self.play(Write(part2), run_time=t.duration / 2)
+        
+        self.play(Unwrite(part2))
+
+        self.wait()
