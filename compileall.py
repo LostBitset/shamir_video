@@ -10,15 +10,29 @@ with open("scene.py", "r") as f:
             name, _ = matches.groups()
             scenes.append(name)
 
-def makeFfmpegLine(name):
+def makeFfmpegInput(name):
+    return f"-i 'media/videos/scene/1080p60/{name}.mp4'"
+
+print("Scene List:")
+for name in scenes:
     ch = "├"
     if name == scenes[len(scenes)-1]:
         ch = "└"
     print(f"{ch} {name}")
-    return f"file 'media/videos/scene/1080p60/{name}.mp4'"
 
-with open("sceneorder.txt", "w") as f:
-    print("Scene List:")
-    f.writelines([
-        makeFfmpegLine(name) + "\n" for name in scenes
-    ])
+inputs = " ".join(map(makeFfmpegInput, scenes))
+
+ffmpeg_filter_text = ""
+for i in range(len(scenes)):
+    ffmpeg_filter_text += f"[{i}:v] "
+    if not scenes[i].startswith("SceneCard"):
+        ffmpeg_filter_text += f"[{i}:a] "
+ffmpeg_filter_text += f"concat=n={len(scenes)}:v=1:a=1 [v] [a]"
+
+filterpart = f"-filter_complex \"{ffmpeg_filter_text}\""
+
+mappings = "-map \"[v]\" -map \"[a]\""
+
+ffmpeg_command = f"ffmpeg {inputs} {filterpart} {mappings} output.mp4"
+print("FFmpeg Command:")
+print(f">>> {ffmpeg_command}")
