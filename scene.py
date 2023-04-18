@@ -539,7 +539,7 @@ class SceneCard3(Scene):
     def construct(self):
         scene_card(self, 3, "Galois Fields")
 
-class Top(VoiceoverScene):
+class ExplainPrimeFields(VoiceoverScene):
     def construct(self):
         setup_speech(self)
 
@@ -707,5 +707,74 @@ class Top(VoiceoverScene):
         rm_time = rmduration / len(to_rm)
         for i in to_rm:
             self.play(Unwrite(i), run_time=rm_time)
+
+        self.wait()
+
+class Top(VoiceoverScene):
+    def construct(self):
+        setup_speech(self)
+
+        with self.voiceover(
+            "As it turns out, you can't just have a finite field with any number of elements"
+        ) as t:
+            self.wait(t.duration)
+        
+        with self.voiceover(
+            "but they don't have to be prime either. "
+        ) as t:
+            self.wait(t.duration)
+        
+        gf = MathTex(r"p^m", font_size=100)
+        with self.voiceover(
+            """
+            The number of elements in a finite field must be
+            a prime number p to some natural power m.
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.play(Write(gf), run_time=t.duration)
+        
+        with self.voiceover("These are often called \"prime powers\". ") as t:
+            self.wait(t.duration)
+        
+        with self.voiceover(
+            "We call any field with a finite number of elements a Galois field. "
+        ) as t:
+            self.play(
+                Transform(
+                    gf,
+                    MathTex(r"GF(p^m)", font_size=100)
+                ),
+                run_time=t.duration
+            )
+
+        with self.voiceover("So, what happens when m isn't equal to one?") as t:
+            self.wait(t.duration)
+        
+        with self.voiceover(
+            """
+            Those are called extension fields, and are incredibly important
+            to cryptography, closely tied to linear algebra, and unbelievably beautiful.
+            But that's for part 2. 
+            """):
+            self.wait(t.duration)
+        
+        with self.voiceover("But for our secret sharing algorithm, prime fields work just fine. "):
+            self.play(
+                Transform(
+                    gf,
+                    MathTex(r"GF(p)", font_size=100)
+                ),
+                run_time=t.duration
+            )
+        
+        with self.voiceover(
+            """
+            That's it. We solved the secret sharing problem.
+            Just use polynomial interpolation on prime fields. 
+            This algorithm is called "Shamir's Secret Sharing",
+            after Adi Shamir. 
+            """.strip().replace("\n", " ")
+        ) as t:
+            self.play(Unwrite(gf), run_time=t.duration)
 
         self.wait()
